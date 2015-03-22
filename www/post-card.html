@@ -37,6 +37,21 @@
     :host([favorite]) core-icon-button {
       color: #da4336;
     }
+		[id^="time-"]{
+			position:inherit;
+			border:solid 1px;
+		}
+		input{
+			font-family: "RobotoDraft";
+			display: block;
+			font-size: 2.5rem;
+      font-weight: 300;
+			padding:10px;
+			width: 50px;
+			outline: none;
+			text-align: center;
+		}
+		.col-xs-6{width:49%;display:inline-block}
     </style>
 
     <div class="card-header" layout horizontal center>
@@ -45,13 +60,23 @@
       <content select="h2"></content>
 
     </div>
-
+		
     <core-icon-button
       id="favicon"
       icon="favorite"
       on-tap="{{favoriteTapped}}">
     </core-icon-button>
-
+		<core-layout-trbl></core-layout-trbl>
+		<div class="col-xs-6">
+			<core-icon-button id="time-hr-up" icon="arrow-drop-up" on-tap="{{timeUp}}"></core-icon-button>
+			<input is="core-input" value="{{hr}}" onclick="this.select()">
+			<core-icon-button id="time-hr-down" icon="arrow-drop-down" on-tap="{{timeDown}}"></core-icon-button>
+		</div>
+		<div class="col-xs-6">
+			<core-icon-button id="time-min-up" icon="arrow-drop-up" on-tap="{{timeUp}}"></core-icon-button>
+			<input is="core-input" value="{{min}}" onclick="this.select()">
+			<core-icon-button id="time-min-down" icon="arrow-drop-down" on-tap="{{timeDown}}"></core-icon-button>
+		</div>
     <content></content>   
   </template>
   <script>
@@ -65,7 +90,61 @@
     favoriteTapped: function(event, detail, sender) {
       this.favorite = !this.favorite;
       this.fire('favorite-tap');
-    }
+    },
+		timeUp: function(event,detail,sender){
+			if(sender.id == 'time-hr-up'){
+				var t = this.hr;
+				if(t == 12){
+					t = 1;
+				}else{
+					t++;
+				}
+				this.hr = t;
+			}else{
+				var t = this.min;
+				if(t == 59){
+					t = '00';
+				}else{
+					t++;
+				}
+				this.min = pad(t,2);
+			}
+		},
+		timeDown: function(event,detail,sender){
+			if(sender.id == 'time-hr-down'){
+				var t = this.hr;
+				if(t == 1){
+					t = 12;
+				}else{
+					t--;
+				}
+				this.hr	= t;
+			}else{
+				var t = this.min;
+				if(t == 0){
+					t = 59;
+				}else{
+					t--;
+				}
+				this.min	= pad(t,2);
+			}
+		},
+		hrChange: function(event,detail,sender){
+			this.blur();
+		},
+		minChange: function(event,detail,sender){
+			this.inputValue.select;
+		},
+		ready:function(event,detail,sender){
+			this.hr = 6;
+			this.min = '00';
+		}
+		
   });
+	function pad(n, width, z) {
+		z = z || '0';
+		n = n + '';
+		return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+	}
   </script>
 </polymer-element>
